@@ -69,9 +69,10 @@ class DiscordWebhooks(PluginBase):
             return
         #Generate Alert details
         alert_dict = alert.__dict__
-        message = "`{}` - **[{}]** - {alert.resource} ({}) reported {} \n{}".format(
+        message = "`{}` - **[{}]** - {} ({}) reported {} \n{}".format(
             alert.create_time.strftime('%Y-%m-%d %M:%H:%S'),
             alert.severity.upper(),
+            alert.resource,
             alert.environment,
             alert.event,
             alert_dict['text']
