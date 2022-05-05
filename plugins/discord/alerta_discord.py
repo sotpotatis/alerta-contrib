@@ -68,6 +68,7 @@ class DiscordWebhooks(PluginBase):
             LOG.debug("Ignoring alert with severity %s since it is too low."%(alert.severity.lower()))
             return
         #Generate Alert details
+        LOG.debug("Generating Discord message...")
         alert_dict = alert.__dict__
         message = "`{}` - **[{}]** - {} ({}) reported {} \n{}".format(
             alert.create_time.strftime('%Y-%m-%d %M:%H:%S'),
@@ -87,6 +88,7 @@ class DiscordWebhooks(PluginBase):
         }
 
         try:
+            LOG.debug(f"Sending request to {DISCORD_WEBHOOKS_URL}...")
             r = requests.post(DISCORD_WEBHOOKS_URL, data=discord_body)
             if r.status_code not in [200, 204]:
                 LOG.critical("Unknown status code received from Discord: {} (text {})".format(r.status_code, r.text))
