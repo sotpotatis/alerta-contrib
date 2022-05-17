@@ -70,13 +70,18 @@ class DiscordWebhooks(PluginBase):
         #Generate Alert details
         LOG.debug("Generating Discord message...")
         alert_dict = alert.__dict__
-        message = "`{}` - **[{}]** - {} ({}) reported {} \n{}".format(
+        #Generate Alert text
+        if len(alert_dict['text']) > 0:
+            parsed_alert_text = "Text:" + alert_dict['text']
+        else:
+            parsed_alert_text = ""
+        message = "`{}` - **[{}]** - *{} ({})* reported *{}* \n{}".format(
             alert.create_time.strftime('%Y-%m-%d %M:%H:%S'),
             alert.severity.upper(),
             alert.resource,
             alert.environment,
             alert.event,
-            alert_dict['text']
+            parsed_alert_text
         )
         discord_body = {
             "embeds": [{
@@ -98,10 +103,12 @@ class DiscordWebhooks(PluginBase):
         LOG.debug(f"Generated Discord embed body: {discord_body}.")
         try:
             LOG.debug(f"Sending request to {DISCORD_WEBHOOKS_URL}...")
-            r = requests.post(DISCORD_WEBHOOKS_URL, data=discord_body)
+            r = requests.post(DISCORD_WEBHOOKS_URL, json=discord_body)
             if r.status_code not in [200, 204]:
                 LOG.critical("Unknown status code received from Discord: {} (text {})".format(r.status_code, r.text))
                 raise RuntimeError("Unknown status code received from Discord: %s"%(r.status_code))
+            else:
+                LOG.info("Alert successfully forwarded to Discord.")
         except Exception as e:
             LOG.critical("Failed to send Discord Webhooks message: %s."%(e), exc_info=True)
             raise RuntimeError("Error encountered when sending Discord webhooks: %s"%(e))
