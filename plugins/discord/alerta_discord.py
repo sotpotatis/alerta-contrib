@@ -86,7 +86,7 @@ class DiscordWebhooks(PluginBase):
                 "color": SEVERITY_TO_DISCORD_COLOR[alert.severity.lower()]
             }]
         }
-
+        LOG.debug(f"Generated Discord embed body: {discord_body}.")
         try:
             LOG.debug(f"Sending request to {DISCORD_WEBHOOKS_URL}...")
             r = requests.post(DISCORD_WEBHOOKS_URL, data=discord_body)
@@ -96,6 +96,7 @@ class DiscordWebhooks(PluginBase):
         except Exception as e:
             LOG.critical("Failed to send Discord Webhooks message: %s."%(e), exc_info=True)
             raise RuntimeError("Error encountered when sending Discord webhooks: %s"%(e))
+
     def status_change(self, alert, status, text):
         return
 
