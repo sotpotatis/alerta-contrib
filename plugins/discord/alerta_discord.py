@@ -80,10 +80,19 @@ class DiscordWebhooks(PluginBase):
         )
         discord_body = {
             "embeds": [{
-                "title": "New message posted to Alerta",
-                "description": message,
-                "inline": False,
-                "color": SEVERITY_TO_DISCORD_COLOR[alert.severity.lower()]
+                "title": "📣 New message posted to Alerta",
+                "description": "A new message that matches the message filters was posted to Alerta.",
+                "author": {
+                    "name": "Alerta",
+                    "image": "https://avatars.githubusercontent.com/u/5067139?s=200&v=4" #The Alerta logo from GitHub profile
+                },
+                "fields":
+                    [
+                        {"name": "Posted message",
+                         "value": message,
+                         "inline": False}
+                    ], #Create a field with the posted message
+                "color": SEVERITY_TO_DISCORD_COLOR[alert.severity.lower()] #Map severity to color.
             }]
         }
         LOG.debug(f"Generated Discord embed body: {discord_body}.")
